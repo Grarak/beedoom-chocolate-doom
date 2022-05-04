@@ -27,6 +27,13 @@
 #define SCREENWIDTH  320
 #define SCREENHEIGHT 200
 
+#define BEETMAP_VIEWER_WIDTH 84
+#define BEETMAP_VIEWER_HEIGHT 48
+
+extern void* beetmap_viewer_pixels;
+void beetmap_viewer_pixels_lock();
+void beetmap_viewer_pixels_release();
+
 // Screen height used when aspect_ratio_correct=true.
 
 #define SCREENHEIGHT_4_3 240
@@ -99,5 +106,7 @@ void I_GetWindowPosition(int *x, int *y, int w, int h);
 
 // Joystic/gamepad hysteresis
 extern unsigned int joywait;
+
+
 
 #endif

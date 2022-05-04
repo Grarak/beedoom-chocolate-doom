@@ -607,16 +607,16 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
 
 static void CreateUpscaledTexture(boolean force)
 {
-    int w, h;
+    /*int w, h;
     int h_upscale, w_upscale;
-    static int h_upscale_old, w_upscale_old;
+    static int h_upscale_old, w_upscale_old;*/
 
     SDL_Texture *new_texture, *old_texture;
 
     // Get the size of the renderer output. The units this gives us will be
     // real world pixels, which are not necessarily equivalent to the screen's
     // window size (because of highdpi).
-    if (SDL_GetRendererOutputSize(renderer, &w, &h) != 0)
+    /*if (SDL_GetRendererOutputSize(renderer, &w, &h) != 0)
     {
         I_Error("Failed to get renderer output size: %s", SDL_GetError());
     }
@@ -666,7 +666,7 @@ static void CreateUpscaledTexture(boolean force)
     }
 
     h_upscale_old = h_upscale;
-    w_upscale_old = w_upscale;
+    w_upscale_old = w_upscale;*/
 
     // Set the scaling quality for rendering the upscaled texture to "linear",
     // which looks much softer and smoother than "nearest" but does a better
@@ -677,11 +677,13 @@ static void CreateUpscaledTexture(boolean force)
     new_texture = SDL_CreateTexture(renderer,
                                 pixel_format,
                                 SDL_TEXTUREACCESS_TARGET,
-                                w_upscale*SCREENWIDTH,
-                                h_upscale*SCREENHEIGHT);
+                                BEETMAP_VIEWER_WIDTH,
+                                BEETMAP_VIEWER_HEIGHT);
 
     old_texture = texture_upscaled;
     texture_upscaled = new_texture;
+
+    beetmap_viewer_pixels = (unsigned char *) malloc(BEETMAP_VIEWER_WIDTH * BEETMAP_VIEWER_HEIGHT * SDL_BYTESPERPIXEL(pixel_format));
 
     if (old_texture != NULL)
     {
@@ -792,6 +794,12 @@ void I_FinishUpdate (void)
 
     SDL_SetRenderTarget(renderer, texture_upscaled);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
+
+    beetmap_viewer_pixels_lock();
+
+    SDL_RenderReadPixels(renderer, NULL, pixel_format, beetmap_viewer_pixels, BEETMAP_VIEWER_WIDTH * SDL_BYTESPERPIXEL(pixel_format));
+
+    beetmap_viewer_pixels_release();
 
     // Finally, render this upscaled texture to screen using linear scaling.
 
@@ -1160,7 +1168,7 @@ static void SetVideoMode(void)
 
     // In windowed mode, the window can be resized while the game is
     // running.
-    window_flags = SDL_WINDOW_RESIZABLE;
+    window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
 
     // Set the highdpi flag - this makes a big difference on Macs with
     // retina displays, especially when using small window sizes.
@@ -1209,7 +1217,8 @@ static void SetVideoMode(void)
             SDL_GetError());
         }
 
-        pixel_format = SDL_GetWindowPixelFormat(screen);
+        //pixel_format = SDL_GetWindowPixelFormat(screen);
+        pixel_format = SDL_PIXELFORMAT_RGB24;
 
         SDL_SetWindowMinimumSize(screen, SCREENWIDTH, actualheight);
 
@@ -1245,6 +1254,7 @@ static void SetVideoMode(void)
         // all associated textures get destroyed
         texture = NULL;
         texture_upscaled = NULL;
+        free(beetmap_viewer_pixels);
     }
 
     renderer = SDL_CreateRenderer(screen, -1, renderer_flags);
@@ -1429,7 +1439,7 @@ void I_InitGraphics(void)
     SDL_SetPaletteColors(screenbuffer->format->palette, palette, 0, 256);
 
     // SDL2-TODO UpdateFocus();
-    UpdateGrab();
+    //UpdateGrab();
 
     // On some systems, it takes a second or so for the screen to settle
     // after changing modes.  We include the option to add a delay when
