@@ -35,10 +35,10 @@
 
 #include <string.h>
 #if !HAVE_DECL_STRCASECMP
-#define strcasecmp stricmp
+#define strcasecmp _stricmp
 #endif
 #if !HAVE_DECL_STRNCASECMP
-#define strncasecmp strnicmp
+#define strncasecmp _strnicmp
 #endif
 
 #else

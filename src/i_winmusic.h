@@ -21,15 +21,15 @@
 
 #include "doomtype.h"
 
-boolean I_WIN_InitMusic(void);
-void I_WIN_PlaySong(boolean looping);
-void I_WIN_PauseSong(void);
-void I_WIN_ResumeSong(void);
-void I_WIN_StopSong(void);
-void I_WIN_SetMusicVolume(int volume);
-boolean I_WIN_RegisterSong(char* filename);
-void I_WIN_UnRegisterSong(void);
-void I_WIN_ShutdownMusic(void);
+boolean I_WIN_InitMusic(void) { return false; }
+void I_WIN_PlaySong(boolean looping) {}
+void I_WIN_PauseSong(void) {}
+void I_WIN_ResumeSong(void) {}
+void I_WIN_StopSong(void) {}
+void I_WIN_SetMusicVolume(int volume) {}
+boolean I_WIN_RegisterSong(char* filename) { return false; }
+void I_WIN_UnRegisterSong(void) {}
+void I_WIN_ShutdownMusic(void) {}
 
 #endif
 
